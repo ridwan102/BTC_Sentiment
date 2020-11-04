@@ -5,6 +5,8 @@ from nltk.tokenize import word_tokenize
 import pandas as pd
 import re
 import string
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
 
 analyzer = SentimentIntensityAnalyzer()
 
@@ -99,3 +101,21 @@ def preprocess_sentiment(df):
     df['tokens'] = df.text.map(alphanumeric).map(punc_lower)
     # only comparing positive and negative; took out neutral because logistic regression requires 2 inputs
     df['sentiment'] = df[['positive','negative']].idxmax(1)
+
+# Create a function to calculate the error metrics, since we'll be doing this several times
+def conf_matrix(actual, predicted):
+    cm = confusion_matrix(actual, predicted)
+    sns.heatmap(cm, xticklabels=['predicted_negative', 'predicted_positive'], 
+                yticklabels=['actual_negative', 'actual_positive'], annot=True,
+                fmt='d', annot_kws={'fontsize':20}, cmap="YlGnBu");
+
+    true_neg, false_pos = cm[0]
+    false_neg, true_pos = cm[1]
+
+    accuracy = round((true_pos + true_neg) / (true_pos + true_neg + false_pos + false_neg),3)
+    precision = round((true_pos) / (true_pos + false_pos),3)
+    recall = round((true_pos) / (true_pos + false_neg),3)
+    f1 = round(2 * (precision * recall) / (precision + recall),3)
+
+    cm_results = [accuracy, precision, recall, f1]
+    return cm_results
