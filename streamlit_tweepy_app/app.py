@@ -28,7 +28,7 @@ st.header("Cryptocurrency News Sentiment Analysis")
 
 st.write("How's Cryptocurrency doing? Enter a coin below")
 
-t = st.text_input("Enter cryptocurrency")
+t = st.text_input("")
 
 start = st.button("Get Sentiment")
 
@@ -37,27 +37,48 @@ analyser = SentimentIntensityAnalyzer()
 if start:
     crypto_sentiment = get_sentiments_on_topic(str(t))
     crypto_df = sentiment_to_df(crypto_sentiment)
-    compound_score = crypto_df.describe().loc['mean']['compound']
+    compound_score = crypto_df.describe().loc['mean']['compound'].round(3)
 
     st.write('Sentiment Score: ', compound_score)
+    st.write("")
+    st.write("")
     if compound_score >= 0.05:  # Positive
-        st.write('The sentiment score is above 0.05. Things are looking pretty positive')
-        st.write("Long-Term Investors: HODL")
-        st.write("Day Traders: Sell")
+        positive_text_html="""
+            <div class="container">
+                    <div> The sentiment score is above 0.05. Things are looking pretty positive</div>
+                    <div class="green">Long-Term Investors: HODL</div>
+                    <div class="green">Day/Swing Traders: Sell</div>
+            </div>
+        """ 
+        st.markdown(positive_text_html, unsafe_allow_html=True) #Body rendering
     elif compound_score <= -0.05:  # Negative
-        st.write("The sentiment score is below -0.05. Things are looking negative")
-        st.write("Long-Term Investors: Buy")
-        st.write("Day Traders: Buy")
+        negative_text_html="""
+            <div class="container">
+                <div> The sentiment score is below -0.05. Things are looking negative</div>
+                <div class="green">Long-Term Investors: Buy</div>
+                <div class="green">Day Traders: Buy</div>
+            </div>
+        """ 
+        st.markdown(negative_text_html, unsafe_allow_html=True) #Body rendering
     else:
         st.write("The sentiment score is in betwee -0.05 and 0.05. Just hang tight")
     
-    st.write(crypto_df.head()[['text','source','url']])
-
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
+    st.dataframe(crypto_df.head()[['text','source','url']])
+    st.write("")
+    st.write("")
+    st.write("")
+    st.write("")
     Body_html="""
     <div style="height:560px; background-color: #1D2330; overflow:hidden; text-align: right; line-height:14px; font-size: 12px; font-feature-settings: normal; text-size-adjust: 100%; box-shadow: inset 0 -20px 0 0 #262B38;padding:1px;padding: 0px; margin: 0px; width: 100%;"><div style="height:540px; padding:0px; margin:0px; width: 100%;"><iframe src="https://widget.coinlib.io/widget?type=chart&theme=dark&coin_id=859&pref_coin_id=1505" width="100%" height="536px" scrolling="auto" marginwidth="0" marginheight="0" frameborder="0" border="0" style="border:0;margin:0;padding:0;line-height:14px;"></iframe></div><div style="color: #626B7F; line-height: 14px; font-weight: 400; font-size: 11px; box-sizing: border-box; padding: 2px 6px; width: 100%; font-family: Verdana, Tahoma, Arial, sans-serif;"><a href="https://coinlib.io" target="_blank" style="font-weight: 500; color: #626B7F; text-decoration:none; font-size:11px">Cryptocurrency Prices</a>&nbsp;by Coinlib</div></div>
     """
 
     st.markdown(Body_html, unsafe_allow_html=True) #Body rendering
+
+    st.write("This is not official financial advice. Please do your own research before committing to any trades.")
 
 # class StreamListener(tweepy.StreamListener):
     
