@@ -10,22 +10,15 @@
 
 Focusing on Bitcoin sentiment via Tweets and observing if there is a correlation between a positive/negative sentiment and the price.
 
-![Tableau](./images/tableau_viz.png)
+![App](./images/streamlitapp.png)
+ 
+Whenever the price of Bitcoin increases/decreases, there are a plethora of news articles, Tweets, Telegram chat groups, and etc. projecting that sentiment. "Bitcoin is $17k, BUY BUY BUY" or "Bitcoin is DOOMED!!! SELL!" So in this study we'll attempt to quantify the correlation. For the study itself, we'll focus on two time periods March and October 2020. March 2020 is when the price decreased exponentially and October 2020 is when the price increased exponentially. 
 
-#### Flight delay: The Federal Aviation Administration (FAA) considers a flight to be delayed when it is 15 minutes later than its scheduled time. 
+![BTC_chart](./images/BTCchart.png)
 
-Different Types of Delays:
-- Air Carrier: The cause of the cancellation or delay was due to circumstances within the airline's control (e.g. maintenance or crew problems, aircraft cleaning, baggage loading, fueling, etc.).
-- Extreme Weather: Significant meteorological conditions (actual or forecasted) that, in the judgment of the carrier, delays or prevents the operation of a flight such as tornado, blizzard or hurricane.
-- National Aviation System (NAS): Delays and cancellations attributable to the national aviation system that refer to a broad set of conditions, such as non-extreme weather conditions, airport operations, heavy traffic volume, and air traffic control.
-- Late-arriving aircraft: A previous flight with same aircraft arrived late, causing the present flight to depart late.
-- Security: Delays or cancellations caused by evacuation of a terminal or concourse, re-boarding of aircraft because of security breach, inoperative screening equipment and/or long lines in excess of 29 minutes at screening areas.
-
-### Learning Goals of Project 3
-1. Data into a postgres database
-2. Create a classification model
-3. Interactive Visualization
-
+### Learning Goals
+1. Utilize Unsupervised Learning Techniques 
+2. Create App to display results
 
 #### Skills & Tools
 
@@ -34,82 +27,62 @@ Different Types of Delays:
 *Unsupervised learning
     *Dimensionality reduction: SVD/PCA
     *Topic modeling: LSA (TruncatedSVD), NMF, LDA, CorEx
+    *Sentiment Analysis: TextBlob and Vader Sentiment
 *App
     *App built using Streamlit
 
- #### Data Collection and Clean-Up
+ #### Data Collection and Preprocessing
 
-Tweets scraped via SNScrape and Tweepy 
+Using Twitter as the primary data source, all the Tweet links were collected using SNScrape. Then using Tweepy, the links were input into the API and the output was the actual Tweet. Most Tweets have a plethora of hashtags, emojis, random words, too many exclamation marks, etc.So the Tweets needed to be Preprocessed before conducting any sort of Topic Modeling or Sentiment Analysis. 
 
-Using the Bureau of Transportation (BTS) as the primary data source, all flight information was collected from here. Specific data collected were Origin, Destination, Carrier, Departure Time, Departure Delay, Arrival Time, Arrival Delay, Distance from airports, Time of Flight, and among others to ensure a holistic approach to the data analysis.
+The following were initially remove: 
+- URL's
+- Mentions
+- Hashtags
+- Emojis
+- Smileys
+- Spefic words etc.
 
-The separate datasets collected below were concatenated and then filtered by only La Guardia (LGA), John F. Kennedy (JFK), and Newark (EWR) International Airports.
+Then a function was written to clean the tweet and apply the following: 
+- Lowercasing
+- Punctuation Removal
+- Replace extra white spaces
+- Stopwords removal
 
-Then a DELAY column was created for the purposes of a binary classification. If the departure delay was greater than 15 minutes then it would be considered delayed based on FAA guidelines, otherwise, on-time.
+#### Sentiment Analysis
 
-#### Feature Selection
+With the Tweets cleaned TextBlob sentiment analysis was applied to each Tweet and the output was a Polarity and Subjectivity score. 
+- Subjectivity 
+    - Score of 0 is fact
+    - Score of +1 is very much an opinion 
+- Polarity
+    - Score of -1 is the highest negative sentiment
+    - Score of +1 is the highest positive sentiment
 
-The initial features were day of the week, carrier, origin, destination, departure time, and distance. I wanted to supply the model with only information it would know before someone boarded plane. So things such as arrival time and elapsed air time were removed because these would be unknowns before boarding a plane.
+We want to focus on the polarity score here since we are after user's opinion's on Bitcoin. We compare it to the sentiment from March 2020 to October 2020.
 
-The set was broken into a X-set (features) and y-set (target). They were both pickled for ease of retrieval later. 
+![polarity](./images/polarity.png)
 
-#### Train/Test Split
+#### Topic Modeling
 
-Train, test, split were applied to begin classification with the different models. K-Nearest Neighbor, Logistic Regression, Decision Tree, Random Forest, Gradient Boost, and Gaussian. 
+Topic Modeling was completed using NMF, LSA, LDA, and Corex. The topics were analyzed and compared to one another. For March 2020 topics, NMF/LSA were used as they gave the exact same topics.
+- Topic 1: Sell Bitcoin
+- Topic 2: Price Prediction
+- Topic 3: Different Cryptocurrencies
 
-Process: 
+For November 2020, CorEx topic modeling was used to derive the following topics: 
+- Topic 1: Buy/Sell 
+- Topic 2: Different Cryptocurrencies
+- Topic 3: Giveaways
+- Topic 4: Bitcoin Whitepaper
 
-1. Split the dataset into three pieces: a **training set**, **validation set**, and **test/hold-out set**
-2. Train the model on the **training set**.
-3. Test the model on the **validation set**, and evaluate how well it did.
-4. Locate the best model using cross-validation on the remaining data, and test it **using the test/hold-out set**
-5. More reliable estimate of out-of-sample performance since hold-out set is **truly out-of-sample**
+#### Conclusion
+Utilizing sentiment analysis and topic modeling we were able to see what was most pertinent when it came to Bitcoin Tweets. We were able to observe the sentiment and see what topics were being discussed with, in this case, a higher positive sentiment. There were Tweets about giveaways, buying, and selling. Of course, there was also a topic for Bitcoin Whitepaper's Anniversary on October 31. Overall, this was a good way to observe what people Tweet in regards to Bitcoin, based on their sentiment. 
 
-For KNN and Logistic Regression the features would need to be scaled.
+#### Other
+A Word Cloud was created to visualize the most popular words amongst Tweets. An example of the October 2020 wordcloud is shown below. 
 
-#### Class Imbalance and Balancing Data
-
-After all the data was cleaned. The class imabalance between Delays and On-Time departures were compared. We do not want the model to train on only one of the classes as that would lead to inaccurate scores.
-
-![Class Imabalance](./images/class_imb.png)
-
-![Confusion Matrix](./images/con_mat1.png)
-
-#### All Models Ran + RandomOversampling and SMOTE
-All models were observed (KNeighborsClassifier, LogisticRegression, Gaussian Naive Bayes, Decision Tree Classifier, Random Forest Classifier, Gradient Boosted Classifer) and their scores. Then I focused on the accuracy, precision, recall, and the F1 score then applied the Randomoversampling and SMOTE to balance. 
-
-#### Cross-Validation
-
-Cross-validation was completed to have a more **reliable** estimate of out-of-sample performance than train/test split
-
-#### Gradient Boosted Classifier Hyperparameter Tuning
-
-The Hyperparameters below were tuned for optimal scores: 
-
-**n_estimators**: number of base learner trees  
-**max_depth**: max depth per base tree (typical values are 3-12)   
-**learning_rate**: shrinkage factor applied to each base tree update  
-**subsample**: row subsampling rate (similar to RF)   
-**min_child_weight**: roughly the minimum allowable child samples for a tree split to occur  
-**colsample_bytree**: feature subsampling rate (similar to RF) 
-
-The use of a learning rate/shrinkage factor is a form of regularization that can greatly reduce overfitting. It typically trades off with the n_estimators and depth parameters (raising these add complexity) -- lower learning rate  usually wants higher n_estimators, higher max depth usually wants lower learning rate etc. The two subsampling parameters and min_child_weight are also forms of regularization. These types of tradeoffs are part of why it typically works better to follow a manual tuning procedure than to try a massive grid search across different parameter combinations. That simply doesn't scale well to large datasets. 
-
-#### ROC-AUC Curve
-The intepretation of the _Area Under the Curve_ (AUC) is the probability that a randomly chosen positive example (in this case, fraud) has a higher score than the randomly chosen negative example (in this case, legitimate transactions).
-
-All the models plus RandomOversampler and SMOTE were plotted to be as thorough as possible during our process. 
-
-![ROC-AUC Curve](./images/roc_auc_curve1.png)
-
-#### Final Model & Results
-For the final model, I have chosen Gradient Boosted Classifier with SMOTE to handle class imabalance. As aforementioned, it was the most realistically balanaced with high precision, recall, accuracy, f1, and ROC-AUC scores. I ran Feature Importance, Confusion Matrix, Classification Report, and finally the ROC-AUC curve on the test data to finish the model. 
-
-![Confusion Matrix](./images/con_mat2.png)
-
-![ROC-AUC Curve](./images/roc_auc_curve2.png)
-
-Overall, I shyed away from Random Forest Classifier because of the near perfect balance. It just would not be something I would be able to justify currently and would require further exploration. Gradient Boosted Classifier with SMOTE plus hyperparameter tuning gave high scores in the high 80s to lower 90s for Accuracy, Precision, Recall, F1, and ROC-AUC. I have the most confidence in this model going forward. 
+![wordcloud](./images/wordcloud.png)
 
 #### Sources
 - Scraping Twitter: https://github.com/JustAnotherArchivist/snscrape/tree/master/snscrape
