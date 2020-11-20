@@ -2,7 +2,7 @@
 
 ### Unsupervised Learning and Natural Language Processing (NLP)
 
-#### Presentation Link: [YouTube]()
+#### Presentation Link: [YouTube](https://youtu.be/EyskhUmbIXg)
 #### Streamlit App: [App]()
 
 
