@@ -13,6 +13,10 @@ body {
   text-align: center;
 }
 
+.stButton>button {
+  color: #1D2330;
+}
+
 .green {
     background-color: #4CAF50; /* Green */
     border: none;

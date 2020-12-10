@@ -2,15 +2,16 @@ from __future__ import unicode_literals
 import os
 from newsapi_help_func import *
 import streamlit as st
-import tweepy
+# import tweepy
 import json
-import yaml
+# import yaml
 import operator
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 #Source: https://towardsdatascience.com/how-to-build-your-machine-learning-app-in-3-simple-steps-d56ed910355c
 #Source (build with Tweets if time permits): https://medium.com/analytics-vidhya/building-a-twitter-sentiment-analysis-app-using-streamlit-d16e9f5591f8
 #Widget Source: https://coinlib.io/widgets?w_chart_coin_id=859&w_chart_pref_coin_id=1505&w_all_theme=Dark#w_chart
+#newsapi==0.1.1
 
 def local_css(file_name):
     with open(file_name) as f:
