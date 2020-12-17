@@ -3,7 +3,7 @@
 ### Unsupervised Learning and Natural Language Processing (NLP)
 
 #### Presentation Link: [YouTube](https://youtu.be/EyskhUmbIXg)
-#### Streamlit App: [App]()
+#### Streamlit App: [App](https://btcsentiment.herokuapp.com/)
 
 
 #### Back story:
@@ -22,14 +22,14 @@ Whenever the price of Bitcoin increases/decreases, there are a plethora of news 
 
 #### Skills & Tools
 
-*NLP
-    *Text preprocessing, Count/TF-IDF Vectorizer
-*Unsupervised learning
-    *Dimensionality reduction: SVD/PCA
-    *Topic modeling: LSA (TruncatedSVD), NMF, LDA, CorEx
-    *Sentiment Analysis: TextBlob and Vader Sentiment
-*App
-    *App built using Streamlit
+- NLP
+    - Text preprocessing
+    - Count/TF-IDF Vectorizer
+- Unsupervised learning
+    - Dimensionality reduction: SVD/PCA
+    - Topic modeling: LSA (TruncatedSVD), NMF, LDA, CorEx
+    - Sentiment Analysis: TextBlob and Vader Sentiment
+- App built using Streamlit and deployed on Heroku
 
  #### Data Collection and Preprocessing
 
